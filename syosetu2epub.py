@@ -1,3 +1,4 @@
+import urllib.request
 from bs4 import BeautifulSoup
 
 import os
@@ -9,6 +10,7 @@ import string
 from datetime import datetime
 import requests
 import pytz
+import urllib
 import urllib3
 from html import escape
 
@@ -194,13 +196,9 @@ class SyosetuRequest:
         self.srHeaders = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15'
         }
-        self.proxies = {
-            "http": "http://127.0.0.1:7890",
-            "https": "http://127.0.0.1:7890"
-        }
         self.srCookies = dict(over18='yes')
         self.link: str = link
-        r = requests.get(url=self.link, headers=self.srHeaders, cookies=self.srCookies, proxies=self.proxies, verify=False)
+        r = requests.get(url=self.link, headers=self.srHeaders, cookies=self.srCookies, proxies=urllib.request.getproxies(), verify=False)
         if not r.text:
             raise Exception("Unable to get response from " + link)
         self.page = r.text
