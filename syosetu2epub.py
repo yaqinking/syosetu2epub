@@ -9,8 +9,10 @@ import string
 from datetime import datetime
 import requests
 import pytz
+import urllib3
 from html import escape
 
+urllib3.disable_warnings()
 cwd = os.getcwd()
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
@@ -190,12 +192,15 @@ class Novel:
 class SyosetuRequest:
     def __init__(self, link: str):
         self.srHeaders = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0'
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15'
+        }
+        self.proxies = {
+            "http": "http://127.0.0.1:7890",
+            "https": "http://127.0.0.1:7890"
         }
         self.srCookies = dict(over18='yes')
         self.link: str = link
-
-        r = requests.get(url=self.link, headers=self.srHeaders, cookies=self.srCookies)
+        r = requests.get(url=self.link, headers=self.srHeaders, cookies=self.srCookies, proxies=self.proxies, verify=False)
         if not r.text:
             raise Exception("Unable to get response from " + link)
         self.page = r.text
